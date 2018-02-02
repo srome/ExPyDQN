@@ -61,25 +61,3 @@ class NatureModel(ModelDef):
                         kernel_initializer=keras.initializers.glorot_uniform(),
                         bias_initializer=keras.initializers.constant(value=.1)))
         return model
-
-
-@ModelRegistry.register_model('smallmodel')
-class ExLSTMModel(ModelDef):
-    """ Class to instantiate and return and example LSTM model."""
-
-    def __call__(self, num_actions):
-        inputs = Input(shape=(Constants.phi_length, Constants.image_size[0], Constants.image_size[1]))
-        x = TimeDistributed(Conv2D(32, kernel_size=(8, 8),
-                         activation='relu',
-                         strides=4,
-                         input_shape=(Constants.phi_length, Constants.image_size[0], Constants.image_size[1]),
-                         data_format='channels_first', padding='same',
-                         kernel_initializer=keras.initializers.glorot_uniform(),
-                         bias_initializer=keras.initializers.constant(value=.1)))(x)
-        x = Dropout(.25)(x)
-        x = Flatten()(x)
-        x = Dense(32, activation='relu')(x)
-        x = Dropout(.25)(x)
-        x = Dense(num_actions, activation='linear', init='zero')(x)
-        model = Model(inputs,x)
-        return model
