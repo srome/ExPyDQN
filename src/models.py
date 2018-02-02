@@ -6,6 +6,7 @@ import keras.backend as K
 from keras.layers import Lambda, Input, Dense, Flatten, Conv2D
 from copy import deepcopy
 import keras
+import os
 from src.model_registry import ModelRegistry
 
 
@@ -76,8 +77,9 @@ class DQN:
             self._fixed_model = load_model(model_path)
         else:
             model_build_function = ModelRegistry.get_model(model_type)
-            self._model, self._fixed_model = model_build_function(self._num_actions), model_build_function(
-                self._num_actions)
+            print(type(model_build_function))
+            print(model_build_function)
+            self._model, self._fixed_model = model_build_function(self._num_actions), model_build_function(self._num_actions)
             self._update_fixed_model()  # Fixed model = model at start
 
         # Initialize
@@ -101,7 +103,7 @@ class DQN:
         def clipped_masked_error(args):
             y_pred, rewards, future_max_rewards, output_mask, is_terminal = args
 
-            masked_y_pred = K.sum(y_pred * output_mask, axis=1).reshape((self._minibatch, 1))
+            masked_y_pred = K.reshape(K.sum(y_pred * output_mask, axis=1),shape=(self._minibatch, 1))
             target = rewards + discount * (K.ones_like(is_terminal) - is_terminal) * future_max_rewards
 
             diff = masked_y_pred - target
@@ -222,3 +224,4 @@ class DQN:
         for k in range(len(self._model.layers)):
             new_weights = deepcopy(self._model.layers[k].get_weights())
             self._fixed_model.layers[k].set_weights(new_weights)  # guarantee the fixed model sees different values
+

@@ -1,4 +1,4 @@
-from keras.models import Sequential
+from keras.models import Sequential, Model
 from keras.layers import Dense, Flatten, Conv2D
 import keras
 
@@ -11,7 +11,7 @@ class ModelRegistry:
     @classmethod
     def register_model(cls, name):
         def decorator(f):
-            cls.registry[name] = f
+            cls.registry[name] = f()
             return f
         return decorator
 
@@ -20,6 +20,7 @@ class ModelRegistry:
         return cls.registry[name]
 
 class ModelDef:
+
     def __call__(self, num_actions):
         """ Function to implement to define neural network."""
         pass
@@ -59,4 +60,3 @@ class NatureModel(ModelDef):
                         kernel_initializer=keras.initializers.glorot_uniform(),
                         bias_initializer=keras.initializers.constant(value=.1)))
         return model
-

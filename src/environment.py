@@ -132,8 +132,7 @@ class TrainingEnvironment:
 
     def training_step(self):
         if self.replay_memory.replay_full():
-            states, future_states, actions, rewards, is_terminal_inds = self.replay_memory.sample \
-                (size=self.minibatch_size)
+            states, future_states, actions, rewards, is_terminal_inds = self.replay_memory.sample()
             self.model.train(states=states, rewards=rewards, future_states=future_states, actions=actions, is_terminal=is_terminal_inds)
 
     def step(self, action):

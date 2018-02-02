@@ -16,7 +16,7 @@ parser.add_argument('--null-op-max', default=30, type=int,
                     help='Maximum number of null operations after an Atari environment reset.')
 parser.add_argument('--phi-length', default=4, type=int,
                     help='Number of consecutive frames to stack to pass to the model (considering frame skip).')
-parser.add_argument('--memory', default=1000000, type=int,
+parser.add_argument('--memory', default=100000, type=int,
                     help='Replay memory size. This can lead to allocation errors if it is too large.')
 parser.add_argument('--model-def', default='nature',
                     help="""Name assigned to the ModelDef class as given to the ModelRegistry class. The ModelDef
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     # Derived Constants
     env = gym.make(Constants.game)
-    actions = range(Constants.env.action_space.n) if args.actions is None else args.actions
+    actions = range(env.action_space.n) if args.actions is None else args.actions
 
     if not os.path.exists(Constants.save_path):
         os.makedirs(Constants.save_path)
