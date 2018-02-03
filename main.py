@@ -8,6 +8,7 @@ from src.environment import TrainingEnvironment
 from src.models import DQN
 from src.processor_registry import ProcessorRegistry
 from src.replay_memory import ReplayMemory
+from gym import wrappers
 
 parser = argparse.ArgumentParser(description='Setup the Google DeepMind Atari Paper (Nature).')
 parser.add_argument('--frame-skip', default=4, type=int,
@@ -66,6 +67,8 @@ parser.add_argument('--actions', nargs='+', type=int, default=None,
                     help='Input the actions availble to the learner. Default is all available. (Multiple arguments, e.g.: 0 4 5)')
 parser.add_argument('--log-file', default='log.txt',
                     help='Location of the file for log output.')
+parser.add_argument('--monitor-path', default=None,
+                    help='Location to output the video results the run.')
 
 if __name__ == '__main__':
     # Parse inputs
@@ -96,10 +99,16 @@ if __name__ == '__main__':
     Constants.gradient_clip = args.gradient_clip
     Constants.consecutive_max = not args.no_consecutive_max
     Constants.processor = args.processor
+    Constants.monitor_path = args.monitor_path
+
 
     # Derived Constants
     env = gym.make(Constants.game)
     actions = range(env.action_space.n) if args.actions is None else args.actions
+
+    if Constants.monitor_path is not None:
+        env = wrappers.Monitor(env, Constants.monitor_path)
+
 
     if not os.path.exists(Constants.save_path):
         os.makedirs(Constants.save_path)
@@ -158,3 +167,5 @@ if __name__ == '__main__':
         gh.run()
     except OSError as e:
         raise Exception("If the error is a memory error, try shrinking the replay memory.", e)
+    finally:
+        env.close()

@@ -9,7 +9,7 @@ to be memory efficient but the main goals were to be written in a clear, concise
 
 ## Installation
 
-Installing via pip in a virtualenv is recommended using the requirements.txt file.
+Installing via pip in a virtualenv is recommended using the requirements.txt file. You must also install libav-tools in order to use the Monitor class from OpenAI Gym.
  
 ```shell
 pip install -r requirements.txt
@@ -46,6 +46,14 @@ turns off training.
 
 ```shell
 python main.py --load-model example/checkpoint_10.h5 --play-epsilon .05 --watch
+```
+
+#### Watching Monitor Results
+
+The results will be saved to mp4, but the videos will be slowed down. Barring different settings, I would suggest something like this to speed them up to normal speed:
+
+```shell
+ffmpeg -i input.mkv -filter:v "setpts=0.25*PTS" output.mkv
 ```
 
 ### Extending the Framework
